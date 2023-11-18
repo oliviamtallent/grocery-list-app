@@ -58,7 +58,7 @@ function joinFamily(code, retFun, codeError) {
           .update({
             members: firestore.FieldValue.arrayUnion(username)
           }).then((docSnap) => { 
-            retFun(docSnap);
+            retFun(querySnapshot.docs[0]);
           })
         }
     });
@@ -225,5 +225,4 @@ export default {
     updatePurchase,
     getUsername,
     updateUser,
-    getDispFam,
 }

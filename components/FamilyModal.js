@@ -29,10 +29,12 @@ const FamilyModal = (props) => {
           const families = [];
 
           querySnapshot.forEach((docSnap) => {
-            families.push({
-              ...docSnap.data(),
-              key: docSnap.id,
-            })
+            if (docSnap != null) {
+              families.push({
+                ...docSnap.data(),
+                key: docSnap.id,
+              })
+            }
           })
           
           setFamilies(families);
@@ -68,12 +70,13 @@ const FamilyModal = (props) => {
                     <Text style={[styles.plainText,{alignItems: 'flex-end'}]}>{item.joinCode}</Text>
                   </View>
                   {
-                    item.members.map((name) => (
-                      <Text style={[{marginStart: 30}, styles.plainText]}>{"- " + name}</Text>
+                    item.members.map((name,i) => (
+                      <Text key={i} style={[{marginStart: 30}, styles.plainText]}>{"- " + name}</Text>
                     ))
                   }
                 </View>
               )}
+              keyExtractor={item => item.key}
             />
             <View style={{flexDirection: 'row', alignItems:'center', marginStart: 20}}>
               <TouchableOpacity onPress={() => { props.updateCurrent(DatabaseHandler.getUsername(), DatabaseHandler.getUsername()) }}>

@@ -73,6 +73,9 @@ export function RegisterScreen({navigation}) {
                     onChangePassword(null);
                     onShowSuccess(true);
                   })
+                }) 
+                .catch(e => {
+                  console.log(e);
                 })
            })
         } else {

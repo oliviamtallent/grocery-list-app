@@ -68,7 +68,8 @@ export function MainScreen({navigation}) {
       DatabaseHandler.joinFamily(code, (val) => {
         onChangeCode(null);
         onChangeName(null);
-        onShowCreate(false);
+        onShowJoin(false);
+        onShowFamilyModal(true);
         setDisplayFamily(val.data().name);
         setFamilyId(val.id);
       }, () => { onChangeCodeError('Invalid join code'); });
@@ -102,23 +103,31 @@ export function MainScreen({navigation}) {
 
   /* database access method */
   React.useEffect(() => {
-    const subscriber = firestore()
-      .collection('Items')
-      .where('family','==', dispFamilyId)
-      .onSnapshot((querySnapshot) => {
-        const items = [];
+    if (dispFamilyId != null) {
+      const subscriber = firestore()
+        .collection('Items')
+        .where('family','==', dispFamilyId)
+        .onSnapshot((querySnapshot) => {
+          const items = [];
 
-        querySnapshot.forEach(docSnapshot => {
-          items.push({
-            ...docSnapshot.data(),
-            key: docSnapshot.id,
-          });
+          querySnapshot.forEach(docSnapshot => {
+            items.push({
+              ...docSnapshot.data(),
+              key: docSnapshot.id,
+            });
+          })
+
+          setItems(items);
+          setLoading(false);
         })
-
-        setItems(items);
-        setLoading(false);
-      })
+        
       return () => subscriber()
+    } else {
+      if (DataHandler.getUsername() != null) {  
+        setFamilyId(DataHandler.getUsername())
+        setDisplayFamily(DataHandler.getUsername())
+      }
+    }
   }, [dispFamilyId])
 
   return (
@@ -138,7 +147,7 @@ export function MainScreen({navigation}) {
             <Icon style={styles.mainIcon} size={30}name='info' color={colors.text}/>
           </TouchableOpacity>
         </View>
-        <Text style={styles.header}>{displayFamily === DatabaseHandler.getUsername() ? "Your Grocery List" : displayFamily}</Text>
+        <Text style={styles.header}>{displayFamily === DatabaseHandler.getUsername() || displayFamily === null ? "Your Grocery List" : displayFamily}</Text>
         { !loading && (
           <>
             { items.length == 0 && (
